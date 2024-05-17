@@ -3,14 +3,14 @@ class ConversationsController < ApplicationController
 
   # GET /conversations
   def index
-    @conversations = Current.user.conversations
+    @conversations = Conversation.where(first_id: Current.user.id).or(Conversation.where(second_id: Current.user.id))
 
     json_response(@conversations)
   end
 
   # GET /conversations/1
   def show
-    if @conversation.users.find_by(id: Current.user.id)
+    if @conversation.first_id == Current.user.id || @conversation.second_id == Current.user.id
       json_response(@conversation)
     else
       json_response(nil, :forbidden)

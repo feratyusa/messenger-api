@@ -23,9 +23,8 @@ RSpec.describe 'Conversations API', type: :request do
     context 'when user have conversations' do
       # TODOS: Populate database with conversation of current user
       before :each do
-        dimas.conversations = create_list(:conversation, 5) do |conversation, i|
-          conversation.users << create(:user)
-          conversation.save!
+        conversations = create_list(:user, 5) do |user, i|
+          Conversation.create(first: dimas, second: user)
         end
       end
 
@@ -67,17 +66,15 @@ RSpec.describe 'Conversations API', type: :request do
   end
 
   describe 'GET /conversations/:id' do
-    let(:convo) { create(:conversation) }
     let(:agus) { create(:user, name: "agus") }
 
     context 'when the record exists' do
       # TODO: create conversation of dimas
       before :each do
-        convo.users << dimas
-        convo.users << agus
+        @convo = Conversation.create(first: dimas, second: agus)
       end
 
-      before { get "/conversations/#{convo.id}", params: {}, headers: dimas_headers }
+      before { get "/conversations/#{@convo.id}", params: {}, headers: dimas_headers }
 
       it 'returns conversation detail' do
         expect_response(
@@ -95,7 +92,11 @@ RSpec.describe 'Conversations API', type: :request do
     end
 
     context 'when current user access other user conversation' do
-      before { get "/conversations/#{convo.id}", params: {}, headers: samid_headers }
+      before :each do
+        @convo = Conversation.create(first: dimas, second: agus)
+      end
+
+      before { get "/conversations/#{@convo.id}", params: {}, headers: samid_headers }
 
       it 'returns status code 403' do
         expect(response).to have_http_status(403)

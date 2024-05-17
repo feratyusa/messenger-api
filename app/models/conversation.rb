@@ -1,7 +1,7 @@
 class Conversation < ApplicationRecord
     # User Conversation Many-Many Association
-    has_many :user_conversations
-    has_many :users, through: :user_conversations
+    belongs_to :first, class_name: "User"
+    belongs_to :second, class_name: "User"
 
     # Conversation Text One-Many Association
     has_many :texts

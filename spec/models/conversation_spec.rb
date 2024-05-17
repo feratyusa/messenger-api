@@ -1,5 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Conversation, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  before :each do
+    @userA = create(:user, name: "Jimbo")
+    @userB = create(:user, name: "Bima")
+    @conversation = Conversation.create(first: @userA, second: @userB)
+  end
+
+  it "should associate the user with other user" do
+    expect(@conversation.first.id).to eq @userA.id
+    expect(@conversation.second.id).to eq @userB.id
+  end
 end
