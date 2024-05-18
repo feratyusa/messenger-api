@@ -22,7 +22,7 @@ Run `bundle exec rspec` and make sure all result is green (without error) :)
 
 ### Result
 
-![Test Result][result_file.jpg]
+![Test Result](result_file.jpg)
 
 ## Explanation
 
@@ -30,12 +30,16 @@ Run `bundle exec rspec` and make sure all result is green (without error) :)
 
 There are 4 main models that construct the Messanger API and 1 additional model that store each unread message that user has not read yet. For each model and their associations will be explained below:
 
+---
+
 #### `User` Model 
 
 The `User` is self explanatory and the only model that the challenge provides. The `User` model has 2 main associations which are:
 
 1. `many-to-many` to self `User` model through `Conversation` join model. This association will make sure **only** 2 user model that will connect to one `Conversation` model.
 2. `one-to-many` to `Text` model. This explains that each user will have many texts that they will send to other user.
+
+---
 
 #### `Conversation` Model
 
@@ -45,6 +49,8 @@ The `Conversation` model describes how the application store the information abo
 2. `one-to-many` to `Text` model. Besides user, conversation will also store all the text that has been send from both party so `Conversation` model can list all of the texts.
 3. `one-to-many` to `Unread` model. All of the unread status will be managed by `Conversation` model and because there are only two user, each user will have `Unread` model. More explanation about `Unread` model will be explained below.
 
+---
+
 #### `Text` Model
 
 The `Text` model describes what kind of text/message that the user send to other user through their conversation. There is only one association which is:
@@ -53,9 +59,13 @@ The `Text` model describes what kind of text/message that the user send to other
 
 Thus further, there is a callback function that will run after the creation of `Text` model that will push a new `Unread` entity that will make indirect relation to other user that the text send to. For details look at model desciption at [text.rb](app/models/text.rb)
 
+---
+
 #### `Unread` Model
 
 The `Unread` model describes the unread status of text to other user the text been send to. This entity will only be created when text model has been created using callback function at `Text` model description.
+
+---
 
 ## References
 
