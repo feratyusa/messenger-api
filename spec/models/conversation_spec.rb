@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Conversation, type: :model do
+  it { should belong_to(:first).class_name(User) } # Class: User
+  it { should belong_to(:second).class_name(User) } # Class: User
+  it { should have_many(:unreads) }
+  it { should have_many(:texts) }
+
   before :each do
     @userA = create(:user, name: "Jimbo")
     @userB = create(:user, name: "Bima")
