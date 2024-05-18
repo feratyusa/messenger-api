@@ -29,9 +29,8 @@ class TextsController < ApplicationController
 
     @text = Text.new(message: params[:message], user: Current.user, conversation: @conversation)
 
-    if @text.save
-      @conversation.save
-      render json: @text, serializer: TextCreatedSerializer, include: ['conversation'], status: :created
+    if @text.save && @conversation.save
+      render json: @text, serializer: TextCreatedSerializer, include: ['conversation', 'unread'], status: :created
     else
       render json: {"error" => {"message": "failed to create text"}}, status: :unprocessable_entity
     end
