@@ -20,6 +20,10 @@ My solution to Challenge of making Messanger API using Ruby on Rails within 3 da
 
 Run `bundle exec rspec` and make sure all result is green (without error) :)
 
+### Result
+
+![Test Result][result_file.jpg]
+
 ## Explanation
 
 ### Models
