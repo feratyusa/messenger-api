@@ -4,7 +4,7 @@ RSpec.describe Conversation, type: :model do
   before :each do
     @userA = create(:user, name: "Jimbo")
     @userB = create(:user, name: "Bima")
-    @conversation = Conversation.create(first: @userA, second: @userB)
+    @conversation = create(:conversation, first: @userA, second: @userB)
   end
 
   it "should associate the user with other user" do

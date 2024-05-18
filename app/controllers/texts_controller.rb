@@ -5,15 +5,15 @@ class TextsController < ApplicationController
   # GET /conversations/:conversation_id/messages
   def index
     @texts = @conversation.texts.all
-    json_response(@texts)
+    render json: @texts , status: :ok
   end
 
-  # GET /texts/1
+  # GET /conversations/:conversation_id/messages/:id
   def show
     if @text.user.id == Current.user.id
-      json_response(@text)
+      render json: @text, status: :ok
     else
-      json_response(nil, :forbidden)
+      render json: {"error" => {"message": "forbidden"}}, status: :forbidden
     end
   end
 
@@ -31,32 +31,18 @@ class TextsController < ApplicationController
 
     if @text.save
       @conversation.save
-      json_response(@text, :created)
+      render json: @text, serializer: TextCreatedSerializer, include: ['conversation'], status: :created
     else
-      json_response(@text.errors, :unprocessable_entity)
+      render json: {"error" => {"message": "failed to create text"}}, status: :unprocessable_entity
     end
   end
-
-  # # PATCH/PUT /texts/1
-  # def update
-  #   if @text.update(text_params)
-  #     render json: @text
-  #   else
-  #     render json: @text.errors, status: :unprocessable_entity
-  #   end
-  # end
-
-  # # DELETE /texts/1
-  # def destroy
-  #   @text.destroy
-  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_text
       @text = Text.find(params[:id])
       if @text == nil
-        json.reponse(nil, :not_found)
+        render json: {"error" => {"message": "text not found"}}, status: :not_found
         return
       end
     end
@@ -69,10 +55,10 @@ class TextsController < ApplicationController
     def set_conversation
       @conversation = Conversation.find_by(id: params[:conversation_id])
       if !@conversation
-        json_response({"error": "conversation not found"}, :not_found)
+        render json: {"error" => {"message": "conversation not found"}}, status: :not_found
         return
       elsif @conversation.first_id != Current.user.id && @conversation.second_id != Current.user.id
-        json_response({"error": "forbidden"}, :forbidden)
+        render json: {"error" => {"message": "forbidden"}}, status: :forbidden
         return
       end
     end

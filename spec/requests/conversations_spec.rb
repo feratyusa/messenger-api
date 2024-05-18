@@ -15,7 +15,7 @@ RSpec.describe 'Conversations API', type: :request do
       it 'returns empty data with 200 code' do
         expect_response(
           :ok,
-          data: []
+          empty_schema
         )
       end
     end
@@ -24,7 +24,8 @@ RSpec.describe 'Conversations API', type: :request do
       # TODOS: Populate database with conversation of current user
       before :each do
         conversations = create_list(:user, 5) do |user, i|
-          Conversation.create(first: dimas, second: user)
+          convo = create(:conversation, first: dimas, second: user)
+          create(:text, user: dimas, conversation: convo)
         end
       end
 
@@ -34,32 +35,14 @@ RSpec.describe 'Conversations API', type: :request do
         # Note `response_data` is a custom helper
         # to get data from parsed JSON responses in spec/support/request_spec_helper.rb
 
-        expect(response_data).not_to be_empty
-        expect(response_data.size).to eq(5)
+        expect(response_body).not_to be_empty
+        expect(response_body.size).to eq(5)
       end
 
       it 'returns status code 200 with correct response' do
         expect_response(
           :ok,
-          data: [
-            {
-              id: Integer,
-              with_user: {
-                id: Integer,
-                name: String,
-                photo_url: String
-              },
-              last_message: {
-                id: Integer,
-                sender: {
-                  id: Integer,
-                  name: String
-                },
-                sent_at: String
-              },
-              unread_count: Integer
-            }
-          ]
+          conversations_list_schema
         )
       end
     end
@@ -71,7 +54,7 @@ RSpec.describe 'Conversations API', type: :request do
     context 'when the record exists' do
       # TODO: create conversation of dimas
       before :each do
-        @convo = Conversation.create(first: dimas, second: agus)
+        @convo = create(:conversation, first: dimas, second: agus)
       end
 
       before { get "/conversations/#{@convo.id}", params: {}, headers: dimas_headers }
@@ -79,14 +62,7 @@ RSpec.describe 'Conversations API', type: :request do
       it 'returns conversation detail' do
         expect_response(
           :ok,
-          data: {
-            id: Integer,
-            with_user: {
-              id: Integer,
-              name: String,
-              photo_url: String
-            }
-          }
+          conversation_index_schema
         )
       end
     end

@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Messages API', type: :request do
-  let(:agus) { create(:user) }
-  let(:dimas) { create(:user) }
+  let(:agus) { create(:user, name: "agus") }
+  let(:dimas) { create(:user, name: "dimas") }
   let(:dimas_headers) { valid_headers(dimas.id) }
 
-  let(:samid) { create(:user) }
+  let(:samid) { create(:user, name: "samid") }
   let(:samid_headers) { valid_headers(samid.id) }
 
   # TODO: create conversation between Dimas and Agus, then set convo_id variable
@@ -26,17 +26,7 @@ RSpec.describe 'Messages API', type: :request do
         expect(convo.texts.length).to eq 10
         expect_response(
           :ok,
-          data: [
-            {
-              id: Integer,
-              message: String,
-              sender: {
-                id: Integer,
-                name: String
-              },
-              sent_at: String
-            }
-          ]
+          texts_list_schema
         )
       end
     end
@@ -79,29 +69,13 @@ RSpec.describe 'Messages API', type: :request do
       { message: '', user_id: agus.id }
     end
 
-    context 'when request attributes are valid' do
+    context 'when request attributes are valid for dimas' do
       before { post "/messages", params: valid_attributes.to_json , headers: dimas_headers}
 
-      it 'returns status code 201 (created) and create conversation automatically' do
+      it 'returns status code 201 (created) and create conversation automatically with agus' do
         expect_response(
           :created,
-          data: {
-            id: Integer,
-            message: String,
-            sender: {
-              id: Integer,
-              name: String
-            },
-            sent_at: String,
-            conversation: {
-              id: Integer,
-              with_user: {
-                id: Integer,
-                name: String,
-                photo_url: String
-              }
-            }
-          }
+          text_created_schema
         )
       end
     end
@@ -112,23 +86,7 @@ RSpec.describe 'Messages API', type: :request do
       it 'returns status code 201 (created) and create conversation automatically' do
         expect_response(
           :created,
-          data: {
-            id: Integer,
-            message: String,
-            sender: {
-              id: Integer,
-              name: String
-            },
-            sent_at: String,
-            conversation: {
-              id: Integer,
-              with_user: {
-                id: Integer,
-                name: String,
-                photo_url: String
-              }
-            }
-          }
+          text_created_schema
         )
       end
     end

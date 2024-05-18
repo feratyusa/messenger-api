@@ -5,54 +5,24 @@ class ConversationsController < ApplicationController
   def index
     @conversations = Conversation.where(first_id: Current.user.id).or(Conversation.where(second_id: Current.user.id))
 
-    json_response(@conversations)
+    render json: @conversations, include: ["texts"], status: :ok
   end
 
-  # GET /conversations/1
+  # GET /conversations/:id
   def show
     if @conversation.first_id == Current.user.id || @conversation.second_id == Current.user.id
-      json_response(@conversation)
+      render json: @conversation, serializer: ConversationIndexSerializer, status: :ok
     else
-      json_response(nil, :forbidden)
+      render json: {"error" => {"message": :forbidden}}, status: :forbidden
     end
   end
-
-  # POST /conversations
-  # def create
-  #   @conversation = Conversation.new(conversation_params)
-
-  #   if @conversation.save
-  #     render json: @conversation, status: :created, location: @conversation
-  #   else
-  #     render json: @conversation.errors, status: :unprocessable_entity
-  #   end
-  # end
-
-  # PATCH/PUT /conversations/1
-  # def update
-  #   if @conversation.update(conversation_params)
-  #     render json: @conversation
-  #   else
-  #     render json: @conversation.errors, status: :unprocessable_entity
-  #   end
-  # end
-
-  # DELETE /conversations/1
-  # def destroy
-  #   @conversation.destroy
-  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_conversation
       @conversation = Conversation.find(params[:id])
       if @conversation == nil
-        json_response(nil, :not_found)
+        render json: {"error" => {"message": :not_found}}, status: :not_found
       end
     end
-
-    # Only allow a list of trusted parameters through.
-    # def conversation_params
-    #   params.require(:conversation).permit(:name)
-    # end
 end
