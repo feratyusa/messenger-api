@@ -26,6 +26,7 @@ RSpec.describe 'Conversations API', type: :request do
         conversations = create_list(:user, 5) do |user, i|
           convo = create(:conversation, first: dimas, second: user)
           create(:text, user: dimas, conversation: convo)
+          create_list(:text, rand(6)+1, user: user, conversation: convo)
         end
       end
 

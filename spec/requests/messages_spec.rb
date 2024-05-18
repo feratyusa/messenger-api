@@ -23,6 +23,7 @@ RSpec.describe 'Messages API', type: :request do
       it 'returns list all messages in conversation' do
         expect(dimas.texts.length).to eq 5
         expect(agus.texts.length).to eq 5
+        expect(convo.unreads.where("user_id = :user_id",{user_id: dimas.id}).length).to eq 5
         expect(convo.texts.length).to eq 10
         expect_response(
           :ok,

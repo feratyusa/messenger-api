@@ -5,4 +5,7 @@ class Conversation < ApplicationRecord
 
     # Conversation Text One-Many Association
     has_many :texts
+
+    # Conversation Unread
+    has_many :unreads
 end

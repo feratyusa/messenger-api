@@ -37,6 +37,10 @@ class ConversationSerializer < ActiveModel::Serializer
   end
 
   def unread_count
-    0
+    if Current.user.id == object.first.id
+      object.unreads.where("user_id = :user_id", {user_id: object.first.id}).length
+    else
+      object.unreads.where("user_id = :user_id", {user_id: object.second.id}).length
+    end
   end
 end

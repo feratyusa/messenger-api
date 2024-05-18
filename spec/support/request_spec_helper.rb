@@ -17,7 +17,7 @@ module RequestSpecHelper
       e.message << "\n#{JSON.pretty_generate(response_body)}"
       raise e
     end
-    # expect(JSON::Validator.validate(schema, response_body)).to eq response_body
+
     expect(JSON::Validator.validate(schema, response_body[0] ? response_body[0] : response_body)).to eq true
   end
 end
